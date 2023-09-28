@@ -36,12 +36,13 @@ Options::Options(int argc, char **argv)
         }
     }
 
-    _ip_prefixes = &argv[optind];
-    _prefixes_count = argc - optind;
+    char **ip_prefixes_array = &argv[optind];
+    int prefixes_count = argc - optind;
 
-    for (int i = 0; i < _prefixes_count; i++)
+    for (int i = 0; i < prefixes_count; i++)
     {
-        printf("Non-option argument %s\n", _ip_prefixes[i]);
+        printf("Non-option argument %s\n", ip_prefixes_array[i]);
+        _ip_prefixes.insert(ip_prefixes_array[i]);
     }
 
     printf("filename = %s\n", _file_name ? _file_name : "");
@@ -55,4 +56,8 @@ char* Options::GetFileName(){
 
 char* Options::GetInterfaceName(){
     return _interface_name;
+}
+
+std::set<char *> Options::GetIPPrefixes(){
+    return _ip_prefixes;
 }

@@ -2,7 +2,7 @@ GCC = g++
 CFLAGS = 
 EXE = dhcp-stats
 
-default: main.o optparser.o pcaphandler.o
+default: main.o optparser.o pcaphandler.o stats.o
 	$(GCC) $(CFLAGS) $? -o $(EXE) -lpcap
 
 clean:
@@ -15,4 +15,7 @@ optparser.o: optparser.cpp optparser.h
 	$(GCC) $(CFLAGS) -c $< -o $@
 
 pcaphandler.o: pcaphandler.cpp pcaphandler.h
+	$(GCC) $(CFLAGS) -c $< -o $@
+
+stats.o: stats.cpp stats.h
 	$(GCC) $(CFLAGS) -c $< -o $@

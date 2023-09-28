@@ -14,11 +14,12 @@
 using namespace std;
 
 
+#include "stats.h"
+
 
 PcapHandler::PcapHandler(Options options){
     _options = options;
     char errbuff[PCAP_ERRBUF_SIZE];
-    
     _pcap = pcap_open_offline(options.GetFileName(), errbuff);
 }
 
@@ -41,6 +42,9 @@ void PcapHandler::PrintData(){
     struct pcap_pkthdr *header;
     const u_char *data;
     u_int packetCount = 0;
+
+    Stats stats(_options.GetIPPrefixes());
+
     while (int returnValue = pcap_next_ex(_pcap, &header, &data) >= 0)
     {
         // Show the packet number
@@ -57,8 +61,10 @@ void PcapHandler::PrintData(){
         struct in_addr dst = *(struct in_addr*)(data+SIZE_ETHERNET+IP_INHEADER_OFFSET+IPV4_LENGHT);
 
         printf("SRC: %s, %x\n", inet_ntoa(src), ntohl(src.s_addr));
-        printf("DST: %s, %x\n", inet_ntoa(dst), ntohl(dst.s_addr));
-
+        stats.AddIP(ntohl(src.s_addr));
+        uint32_t a = ntohl(dst.s_addr);
+        printf("DST: %s, %x\n", inet_ntoa(dst), a);
+        stats.AddIP(a);
 
         // Add two lines between packets
         printf("\n\n");
