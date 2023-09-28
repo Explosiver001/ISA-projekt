@@ -1,15 +1,23 @@
 #include <stdio.h>
 #include <string>
 #include "pcaphandler.h"
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+
+#define SIZE_ETHERNET 14 // size of ethernet header
+#define IPV4_LENGHT 4 // 32 bits
+#define IP_INHEADER_OFFSET 12 // offset in IP header from src ip
 
 using namespace std;
+
 
 
 PcapHandler::PcapHandler(Options options){
     _options = options;
     char errbuff[PCAP_ERRBUF_SIZE];
-    // string file = "icmp.pcap";
-    // string file = "dhcp-communication.pcapng";
     
     _pcap = pcap_open_offline(options.GetFileName(), errbuff);
 }
@@ -39,25 +47,18 @@ void PcapHandler::PrintData(){
         printf("Packet # %i\n", ++packetCount);
 
         // Show the size in bytes of the packet
-        printf("Packet size: %d bytes\n", header->len);
+        // printf("Packet size: %d bytes\n", header->len);
 
         // Show a warning if the length captured is different
         if (header->len != header->caplen)
             printf("Warning! Capture size different than packet size: %ld bytes\n", header->len);
 
-        // Show Epoch Time
-        printf("Epoch Time: %d:%d seconds\n", header->ts.tv_sec, header->ts.tv_usec);
+        struct in_addr src = *(struct in_addr*)(data+SIZE_ETHERNET+IP_INHEADER_OFFSET);
+        struct in_addr dst = *(struct in_addr*)(data+SIZE_ETHERNET+IP_INHEADER_OFFSET+IPV4_LENGHT);
 
-        // loop through the packet and print it as hexidecimal representations of octets
-        // We also have a function that does this similarly below: PrintData()
-        for (u_int i=0; (i < header->caplen ) ; i++)
-        {
-            // Start printing on the next after every 16 octets
-            if ( (i % 16) == 0) printf("\n");
+        printf("SRC: %s, %x\n", inet_ntoa(src), ntohl(src.s_addr));
+        printf("DST: %s, %x\n", inet_ntoa(dst), ntohl(dst.s_addr));
 
-            // Print each octet as hex (x), make sure there is always two characters (.2).
-            printf("%.2x ", data[i]);
-        }
 
         // Add two lines between packets
         printf("\n\n");
