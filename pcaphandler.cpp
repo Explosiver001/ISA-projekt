@@ -57,9 +57,12 @@ void PcapHandler::PrintData(){
         if (header->len != header->caplen)
             printf("Warning! Capture size different than packet size: %ld bytes\n", header->len);
 
+        u_char ipv = (*(u_char *)(data+SIZE_ETHERNET)) >> 4;
+
         struct in_addr src = *(struct in_addr*)(data+SIZE_ETHERNET+IP_INHEADER_OFFSET);
         struct in_addr dst = *(struct in_addr*)(data+SIZE_ETHERNET+IP_INHEADER_OFFSET+IPV4_LENGHT);
 
+        printf("IPV: %d\n", ipv);
         printf("SRC: %s, %x\n", inet_ntoa(src), ntohl(src.s_addr));
         stats.AddIP(ntohl(src.s_addr));
         uint32_t a = ntohl(dst.s_addr);
