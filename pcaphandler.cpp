@@ -1,31 +1,69 @@
 #include <stdio.h>
 #include <string>
-#include "pcaphandler.h"
 #include <netinet/in.h>
+#include <netinet/ip.h>
+#include <netinet/udp.h>
+#include <netinet/ether.h> 
 #include <sys/socket.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "pcaphandler.h"
 
-#define SIZE_ETHERNET 14 // size of ethernet header
-#define IPV4_LENGHT 4 // 32 bits
-#define IP_INHEADER_OFFSET 12 // offset in IP header from src ip
+#define ETHERNET_HEADER 14 // size of ethernet header
+#define YIADDR_OFFSET 16 // offset of YIAddr in DHCP packet
 
 using namespace std;
 
 
-#include "stats.h"
-
-
-PcapHandler::PcapHandler(Options options){
+PcapHandler::PcapHandler(Options options, Stats stats){
     _options = options;
-    char errbuff[PCAP_ERRBUF_SIZE];
-    _pcap = pcap_open_offline(options.GetFileName(), errbuff);
+    _stats = stats;
+    bool err = false;
+    if(_options.GetFileName()){
+        err = OpenOffline();
+    }
+    else if (_options.GetInterfaceName()){
+        err = OpenLive();
+    }
+    else{
+        //error
+        exit(1);
+    }
+}
+
+bool PcapHandler::OpenOffline(){
+    char errbuf[PCAP_ERRBUF_SIZE];
+    _pcap = pcap_open_offline(_options.GetFileName(), errbuf);
+    if(_pcap == NULL){
+        printf("%s\n",errbuf);
+        exit(1);
+    }
+    return true; //! fix
+}
+
+
+
+bool PcapHandler::OpenLive(){
+    char errbuf[PCAP_ERRBUF_SIZE];
+    bpf_u_int32 netp;
+    bpf_u_int32 maskp;
+
+    if(pcap_lookupnet(_options.GetInterfaceName(),&netp,&maskp,errbuf) == PCAP_ERROR)
+    {
+        printf("%s\n",errbuf);
+        exit(1);
+    }
+
+    _pcap = pcap_open_live(_options.GetInterfaceName(), BUFSIZ, 1, 1000, errbuf);
+    if(_pcap == NULL){
+        printf("%s\n",errbuf);
+        exit(1);
+    }
+    return true; //! fix
 }
 
 bool PcapHandler::CreateSetFilter(){
-    string filter_expr = "( udp and ( port 67 or port 68 ) )";
-    char errbuf[PCAP_ERRBUF_SIZE];	/* Error string */
+    string filter_expr = "( ip and udp and ( src port 67 ) )";
     struct bpf_program fp;		    /* The compiled filter expression */
     bpf_u_int32 mask = 0;		    /* The netmask of our sniffing device */
     bpf_u_int32 net = 0;		    /* The IP of our sniffing device */
@@ -38,41 +76,44 @@ bool PcapHandler::CreateSetFilter(){
     return true;
 }
 
-void PcapHandler::PrintData(){
+void PcapHandler::GetData(){
     struct pcap_pkthdr *header;
-    const u_char *data;
+    const u_char *packet;
     u_int packetCount = 0;
 
-    Stats stats(_options.GetIPPrefixes());
-
-    while (int returnValue = pcap_next_ex(_pcap, &header, &data) >= 0)
+    while (int returnValue = pcap_next_ex(_pcap, &header, &packet) >= 0)
     {
         // Show the packet number
-        printf("Packet # %i\n", ++packetCount);
+        printf("Packet # %i\n", ++packetCount); //! delete
 
-        // Show the size in bytes of the packet
-        // printf("Packet size: %d bytes\n", header->len);
 
-        // Show a warning if the length captured is different
-        if (header->len != header->caplen)
-            printf("Warning! Capture size different than packet size: %ld bytes\n", header->len);
+        struct ether_header *eptr = (struct ether_header *) packet;
 
-        u_char ipv = (*(u_char *)(data+SIZE_ETHERNET)) >> 4;
+        if(ntohs(eptr->ether_type) != ETHERTYPE_IP){
+            printf("Ethernet type is not IP\n"); //! redo
+            continue;
+        }
 
-        struct in_addr src = *(struct in_addr*)(data+SIZE_ETHERNET+IP_INHEADER_OFFSET);
-        struct in_addr dst = *(struct in_addr*)(data+SIZE_ETHERNET+IP_INHEADER_OFFSET+IPV4_LENGHT);
+        u_int ip_header_len;
+        struct ip* ip_header = (struct ip*) (packet + ETHERNET_HEADER);
+        ip_header_len = ip_header->ip_hl*4;
 
-        printf("IPV: %d\n", ipv);
-        printf("SRC: %s, %x\n", inet_ntoa(src), ntohl(src.s_addr));
-        stats.AddIP(ntohl(src.s_addr));
-        uint32_t a = ntohl(dst.s_addr);
-        printf("DST: %s, %x\n", inet_ntoa(dst), a);
-        stats.AddIP(a);
+        if(ip_header->ip_p != IPPROTO_UDP){
+            printf("IP protocol is not UDP\n"); //! redo
+            continue;
+        }
 
-        // Add two lines between packets
-        printf("\n\n");
+        const struct udphdr *udp_header = (const struct udphdr*) (packet + ETHERNET_HEADER + ip_header_len);
+
+        struct in_addr  yip_addr = *(struct in_addr  *)(packet + ETHERNET_HEADER + ip_header_len + sizeof(udp_header) + YIADDR_OFFSET);
+        printf("YIAddr: %s\n", inet_ntoa(yip_addr)); //! delete
+
+        // here collect stats
+        _stats.AddIP(&yip_addr);
+
     }
 }
+
 
 
 

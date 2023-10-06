@@ -1,12 +1,16 @@
 #include "optparser.h"
 #include "pcaphandler.h"
 #include "logger.h"
+#include "stats.h"
 
 int main(int argc, char *argv[])
 {
     EventLogger logger;
-    // Options options(argc,argv);
-    // PcapHandler pcaphandler(options);
-    // pcaphandler.CreateSetFilter();
-    // pcaphandler.PrintData();
+    Options options(argc,argv);
+    Stats stats(options.GetIPPrefixes());
+    PcapHandler pcaphandler(options, stats);
+    pcaphandler.CreateSetFilter();
+    pcaphandler.GetData();
+
+    return 0;
 }

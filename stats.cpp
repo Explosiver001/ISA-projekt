@@ -7,6 +7,8 @@
 
 using namespace std;
 
+Stats::Stats() = default;
+
 Stats::Stats(std::set<char *> ip_prefixes){
     for(set<char *>::iterator it = ip_prefixes.begin(); it != ip_prefixes.end(); it++){
         string prefix(*it);
@@ -22,13 +24,16 @@ Stats::Stats(std::set<char *> ip_prefixes){
     }
 }
 
-void Stats::AddIP(uint32_t ip){
+void Stats::AddIP(struct in_addr * ip){
+    uint32_t normalized_ip = ntohl(ip->s_addr);
     for(int i = 0; i < _items.size(); i++){
         StatsItem_t * item = &_items.at(i);
-        if(item->base == (ip & item->mask)){
-            printf("ip %x under base: %x\n", ip, item->base);
-            item->ip_used.insert(ip);
-            if(item->ip_used.size() >= ~item->mask){
+        if(item->base == (normalized_ip & item->mask)){
+            printf("ip: %s", inet_ntoa(*ip));
+            uint32_t base = htonl(item->base);
+            printf(" under base: %s\n", inet_ntoa(*(struct in_addr*)&base));
+            item->ip_used.insert(normalized_ip);
+            if(item->ip_used.size() >= ~item->mask - 2){
                 // notify 50%
             }
         }

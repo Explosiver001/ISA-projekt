@@ -8,9 +8,6 @@
 
 using namespace std;
 
-
-
-
 class Stats{
     private:
         typedef struct{
@@ -21,10 +18,10 @@ class Stats{
 
         vector<StatsItem_t> _items;
 
-
     public:
+        Stats();
         Stats(std::set<char *> ip_prefixes);
-        void AddIP(uint32_t ip);
+        void AddIP(struct in_addr * ip);
 };
 
 
