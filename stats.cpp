@@ -18,6 +18,7 @@ Stats::Stats(std::set<char *> ip_prefixes, EventLogger logger){
         struct sockaddr_in addr;
 
         inet_aton(prefix.substr(0,prefix.find('/')).c_str(), &addr.sin_addr);
+        item.warn = false;
         item.mask_len = atoi(prefix.substr(prefix.find('/')+1).c_str());
         item.mask = item.mask_len ? ~0 << 32 - item.mask_len : 0;
         item.network_ip = ntohl(addr.sin_addr.s_addr) & item.mask;
@@ -35,12 +36,12 @@ void Stats::AddIP(struct in_addr * ip){
             printf("ip: %s", inet_ntoa(*ip));
             uint32_t network_ip = htonl(item->network_ip);
             printf(" under base: %s/%d\n", inet_ntoa(*(struct in_addr*)&network_ip), item->mask_len);
-            if(item->ip_used.find(normalized_ip) == item->ip_used.end()){
-                item->ip_used.insert(normalized_ip);
-                if(item->ip_used.size() >= (~item->mask - 2) / 2.0){
-                    _logger.Log50Exceeded(inet_ntoa(*(struct in_addr*)&network_ip), item->mask_len);
-                }
+            item->ip_used.insert(normalized_ip);
+            if((item->ip_used.size() >= (~item->mask - 2) / 2.0) && !item->warn){
+                item->warn = true;
+                _logger.Log50Exceeded(inet_ntoa(*(struct in_addr*)&network_ip), item->mask_len);
             }
+            
         }
     }
 }   

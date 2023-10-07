@@ -17,6 +17,7 @@ class Stats{
             uint32_t network_ip;
             uint32_t mask;
             uint8_t mask_len;
+            bool warn;
             set<uint32_t> ip_used; 
         } StatsItem_t;
 
