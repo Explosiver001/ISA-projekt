@@ -41,13 +41,13 @@ Options::Options(int argc, char **argv)
 
     for (int i = 0; i < prefixes_count; i++)
     {
-        printf("Non-option argument %s\n", ip_prefixes_array[i]);
+        // printf("Non-option argument %s\n", ip_prefixes_array[i]);
         _ip_prefixes.insert(ip_prefixes_array[i]);
     }
 
-    printf("filename = %s\n", _file_name ? _file_name : "");
-    printf("interfacename = %s\n", _interface_name ? _interface_name : "");
-    printf("Use help: %d\n\n", _print_help);
+    // printf("filename = %s\n", _file_name ? _file_name : "");
+    // printf("interfacename = %s\n", _interface_name ? _interface_name : "");
+    // printf("Use help: %d\n\n", _print_help);
 }
 
 char* Options::GetFileName(){

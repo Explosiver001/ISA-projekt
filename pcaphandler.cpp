@@ -64,14 +64,17 @@ bool PcapHandler::OpenLive(){
 
 bool PcapHandler::CreateSetFilter(){
     string filter_expr = "( ip and udp and ( src port 67 ) )";
+
     struct bpf_program fp;		    /* The compiled filter expression */
     bpf_u_int32 mask = 0;		    /* The netmask of our sniffing device */
     bpf_u_int32 net = 0;		    /* The IP of our sniffing device */
     if (pcap_compile(_pcap, &fp, filter_expr.c_str(), 0, net) == -1) {
+        printf("\n\npcap_compile failed\n\n");
         return false;
     }
     if (pcap_setfilter(_pcap, &fp) == -1) {
-        return(false);
+        printf("\n\npcap_setfilter faildef\n\n");
+        return false;
     }
     return true;
 }
@@ -84,7 +87,7 @@ void PcapHandler::GetData(){
     while (int returnValue = pcap_next_ex(_pcap, &header, &packet) >= 0)
     {
         // Show the packet number
-        printf("Packet # %i\n", ++packetCount); //! delete
+        printf("\n\nPacket # %i\n", ++packetCount); //! delete
 
 
         struct ether_header *eptr = (struct ether_header *) packet;

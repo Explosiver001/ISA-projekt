@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 {
     EventLogger logger;
     Options options(argc,argv);
-    Stats stats(options.GetIPPrefixes());
+    Stats stats(options.GetIPPrefixes(), logger);
     PcapHandler pcaphandler(options, stats);
     pcaphandler.CreateSetFilter();
     pcaphandler.GetData();
