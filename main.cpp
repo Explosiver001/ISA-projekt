@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
     PcapHandler pcaphandler(options, stats);
     pcaphandler.CreateSetFilter();
     pcaphandler.GetData();
+    logger.~EventLogger();
 
     return 0;
 }

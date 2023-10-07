@@ -32,16 +32,18 @@ void Stats::AddIP(struct in_addr * ip){
     uint32_t normalized_ip = ntohl(ip->s_addr);
     for(int i = 0; i < _items.size(); i++){
         StatsItem_t * item = &_items.at(i);
-        if(item->network_ip == (normalized_ip & item->mask)){
-            printf("ip: %s", inet_ntoa(*ip));
-            uint32_t network_ip = htonl(item->network_ip);
-            printf(" under base: %s/%d\n", inet_ntoa(*(struct in_addr*)&network_ip), item->mask_len);
-            item->ip_used.insert(normalized_ip);
-            if((item->ip_used.size() >= (~item->mask - 2) / 2.0) && !item->warn){
-                item->warn = true;
-                _logger.Log50Exceeded(inet_ntoa(*(struct in_addr*)&network_ip), item->mask_len);
-            }
-            
-        }
+        if(item->network_ip != (normalized_ip & item->mask))
+            continue;
+
+        uint32_t network_ip = htonl(item->network_ip);
+        printf("ip: %s", inet_ntoa(*ip));
+        printf(" under base: %s/%d\n", inet_ntoa(*(struct in_addr*)&network_ip), item->mask_len);
+
+        item->ip_used.insert(normalized_ip);
+        if(!(item->ip_used.size() >= (~item->mask - 2) / 2.0) || item->warn)
+            continue;
+
+        item->warn = true;
+        _logger.Log50Exceeded(inet_ntoa(*(struct in_addr*)&network_ip), item->mask_len);
     }
 }   

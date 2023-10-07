@@ -11,6 +11,11 @@
 
 #define ETHERNET_HEADER 14 // size of ethernet header
 #define YIADDR_OFFSET 16 // offset of YIAddr in DHCP packet
+#define DHCP_OPTIONS_OFFSET 240
+#define OPTIONS_END 0xff
+#define OPTIONS_MESSAGE_T 0x35
+#define ACK 0x05
+
 
 using namespace std;
 
@@ -65,14 +70,13 @@ bool PcapHandler::OpenLive(){
 bool PcapHandler::CreateSetFilter(){
     string filter_expr = "( ip and udp and ( src port 67 ) )";
 
-    struct bpf_program fp;		    /* The compiled filter expression */
     bpf_u_int32 mask = 0;		    /* The netmask of our sniffing device */
     bpf_u_int32 net = 0;		    /* The IP of our sniffing device */
-    if (pcap_compile(_pcap, &fp, filter_expr.c_str(), 0, net) == -1) {
+    if (pcap_compile(_pcap, &_fp, filter_expr.c_str(), 0, net) == -1) {
         printf("\n\npcap_compile failed\n\n");
         return false;
     }
-    if (pcap_setfilter(_pcap, &fp) == -1) {
+    if (pcap_setfilter(_pcap, &_fp) == -1) {
         printf("\n\npcap_setfilter faildef\n\n");
         return false;
     }
@@ -109,13 +113,37 @@ void PcapHandler::GetData(){
         const struct udphdr *udp_header = (const struct udphdr*) (packet + ETHERNET_HEADER + ip_header_len);
 
         struct in_addr  yip_addr = *(struct in_addr  *)(packet + ETHERNET_HEADER + ip_header_len + sizeof(udp_header) + YIADDR_OFFSET);
+
+        uint32_t options_offset = ETHERNET_HEADER + ip_header_len + sizeof(udp_header) + DHCP_OPTIONS_OFFSET;
+        uint8_t option;
+        uint8_t message_type;
+        while((option = *(uint8_t *)(packet + options_offset)) != OPTIONS_END && options_offset < header->caplen){
+            if(option == OPTIONS_MESSAGE_T){
+                message_type = *(uint8_t *)(packet + options_offset + 2);
+                break;
+            }
+            else{
+                uint8_t size = *(uint8_t *)(packet + options_offset + 1);
+                options_offset = options_offset + 2 + size;
+            }
+        }
+
+        printf("message_type: %d\n", message_type);
+        if(message_type != ACK)
+            continue;
+
         printf("YIAddr: %s\n", inet_ntoa(yip_addr)); //! delete
 
         // here collect stats
         _stats.AddIP(&yip_addr);
 
     }
+    
+    pcap_freecode(&_fp);
+    pcap_close(_pcap);
 }
+
+
 
 
 

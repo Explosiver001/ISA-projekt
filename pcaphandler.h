@@ -10,6 +10,7 @@ class PcapHandler{
         Options _options;
         Stats _stats;
         pcap_t * _pcap;
+        struct bpf_program _fp;
         bool OpenOffline();
         bool OpenLive();
     
