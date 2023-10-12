@@ -40,12 +40,14 @@ void Stats::AddIP(struct in_addr * ip){
             continue;
 
         uint32_t network_ip = htonl(item->network_ip);
-        printf("ip: %s", inet_ntoa(*ip));
-        printf(" under base: %s/%d\n", inet_ntoa(*(struct in_addr*)&network_ip), item->mask_len);
+        // printf("ip: %s", inet_ntoa(*ip));
+        // printf(" under base: %s/%d\n", inet_ntoa(*(struct in_addr*)&network_ip), item->mask_len);
 
         item->ip_used.insert(normalized_ip);
-        if(!(item->ip_used.size() >= (~item->mask - 1) / 2.0) || item->warn)
+        if(!(item->ip_used.size() >= (~item->mask - 1) / 2.0) || item->warn){
+            _logger.UpdateLine(i, item->prefix, (~item->mask - 1), item->ip_used.size());
             continue;
+        }
 
         item->warn = true;
         _logger.Log50Exceeded(inet_ntoa(*(struct in_addr*)&network_ip), item->mask_len);

@@ -25,26 +25,27 @@ EventLogger::EventLogger(){
 
 void EventLogger::Log50Exceeded(char * base, int mask_size){
     // syslog (LOG_INFO, "prefix %s/%d exceeded 50%% of allocations\n", base, mask_size);
-    printf("prefix %s/%u exceeded 50%% of allocations\n", base, mask_size);
+    // printf("prefix %s/%u exceeded 50%% of allocations\n", base, mask_size);
 }
 
 void EventLogger::InitConsoleOutput(std::vector<char *> prefixes, std::vector<int> max_ips){
-    // printf("here\n");
-    // initscr(); //ncurses
-    // printw("IP-Prefix Max-hosts Allocated addresses Utilization\n");
-    // for(int i = 0; i < prefixes.size(); i++){
-    //     printw("%s %d 0.0%%\n", prefixes.at(i), max_ips.at(i));
-    // }
-    // refresh();
-    // printf("IP-Prefix Max-hosts Allocated addresses Utilization\n");
-    // for(int i = 0; i < prefixes.size(); i++){
-    //     printf("%s %d 0.0%%\n", prefixes.at(i), max_ips.at(i));
-    // }
+    _prefix_lines = max_ips.size();
+    printf("IP-Prefix Max-hosts Allocated addresses Utilization\n");
+    for(int i = 0; i < prefixes.size(); i++){
+        printf("%s %d 0.0%%\n", prefixes.at(i), max_ips.at(i));
+    }
 }
 
-
-void EventLogger::UpdateLine(int line, char* prefix, double percentage){
-
+void EventLogger::UpdateLine(int line, char* prefix, int max_devices, int devices){
+    int shift = _prefix_lines - line;
+    for(int i = 0; i < shift; i++){
+        printf("\x1b[1F"); // Move to beginning of previous line
+    }
+    printf("\x1b[1K"); // Erase line
+    printf("%s %d %.2f%\n", prefix, max_devices, (devices/(double)max_devices)*100);
+    for(int i = 0; i < shift; i++){
+        printf("\x1b[1E"); // Move to beginning of next line
+    }
 }
 
 EventLogger::~EventLogger(){
