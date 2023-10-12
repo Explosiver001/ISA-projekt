@@ -4,13 +4,16 @@ import random
 
 def main():
 
+    ack_only = False
     if len(sys.argv)<3:
-        print("run: sudo python3 generate.py <interface> <prefix>")
+        print("run: sudo python3 generate.py <interface> <prefix> [-a]")
         sys.exit(1)
     else:
         tap_interface = sys.argv[1]
         prefix = sys.argv[2]
-
+        
+    if len(sys.argv)>3:
+        ack_only  = True if sys.argv[3] == '-a' else False
     all_ips = [str(ip) for ip in ipaddress.IPv4Network(prefix)]
 
     src_ip = all_ips[0]
@@ -32,7 +35,7 @@ def main():
                         int(scapy.all.DHCPRevOptions["router"][0]),
                         int(scapy.all.DHCPRevOptions["name_server"][0])
                         ]),
-                        ("message-type","ack" if random.randint(0,1) else "offer"),
+                        ("message-type","ack" if random.randint(0,1) or ack_only else "offer"),
                         "end"])
         packet = ethernet / ip / udp / bootp / dhcp
 
