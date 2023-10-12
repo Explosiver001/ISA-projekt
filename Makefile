@@ -1,27 +1,30 @@
 GCC = g++
 CFLAGS = 
 EXE = dhcp-stats
-HEADERS = optparser.h pcaphandler.h stats.h logger.h
+SRC_DIR = src/
 LINK_FLAGS = -lpcap 
 
 
 default: main.o optparser.o pcaphandler.o stats.o logger.o
 	$(GCC) $(CFLAGS) $? -o $(EXE) $(LINK_FLAGS)
+	rm -rf *.o
 
 clean:
 	rm -rf *.o $(EXE)
 
-main.o: main.cpp $(HEADERS)
+main.o: $(SRC_DIR)main.cpp $(SRC_DIR)*.h
 	$(GCC) $(CFLAGS) -c $< -o $@
 
-optparser.o: optparser.cpp $(HEADERS)
+optparser.o: $(SRC_DIR)optparser.cpp $(SRC_DIR)*.h
 	$(GCC) $(CFLAGS) -c $< -o $@
 
-pcaphandler.o: pcaphandler.cpp $(HEADERS)
+pcaphandler.o: $(SRC_DIR)pcaphandler.cpp $(SRC_DIR)*.h
 	$(GCC) $(CFLAGS) -c $< -o $@
 
-stats.o: stats.cpp $(HEADERS)
+stats.o: $(SRC_DIR)stats.cpp $(SRC_DIR)*.h
 	$(GCC) $(CFLAGS) -c $< -o $@
 
-logger.o: logger.cpp $(HEADERS)
+logger.o: $(SRC_DIR)logger.cpp $(SRC_DIR)*.h
 	$(GCC) $(CFLAGS) -c $< -o $@
+
+pack:

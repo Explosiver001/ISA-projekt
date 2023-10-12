@@ -1,0 +1,19 @@
+.TH DHCP-STATS 1
+.SH NAME
+dhcp-stats \- get statistics of subnet load
+.SH SYNOPSIS
+.B dhcp-stats
+[\fB\-r\fR \fI<filename>\fR]
+[\fB\-i\fR \fI<interface>\fR]
+.IR <ip-prefix>
+[ <ip-prefix> [ ... ] ]
+.SH DESCRIPTION
+.B corrupt
+dhcp-stats collects data from PCAP file or captures traffic on interface and creates statistics containing information about subnet load.
+.SH OPTIONS
+.TP
+.BR \-r " "\fI<filename>\fR
+PCAP file to get statistics from.
+.TP
+.BR \-r " " \fI<interface>\fR
+Network interface for live capture.
