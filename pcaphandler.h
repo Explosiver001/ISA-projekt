@@ -15,6 +15,7 @@ class PcapHandler{
         bool OpenLive();
     
     public:
+        ~PcapHandler();
         PcapHandler(Options options, Stats stats);
         bool CreateSetFilter();
         void GetData();

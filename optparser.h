@@ -12,8 +12,10 @@ class Options{
         bool _print_help;
         
     public:
+        ~Options();
         Options();
         Options(int argc, char **argv);
+        bool PrintHelp();
         char* GetFileName();
         char* GetInterfaceName();
         std::set<char *> GetIPPrefixes();

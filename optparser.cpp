@@ -2,8 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <regex>
+#include <string>
+#include <stdexcept>
 
 #include "optparser.h"
+
+Options::~Options() = default;
 
 Options::Options() = default;
 
@@ -39,15 +44,20 @@ Options::Options(int argc, char **argv)
     char **ip_prefixes_array = &argv[optind];
     int prefixes_count = argc - optind;
 
+    std::regex ip_regex("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}/[0-9]{1,2}$");
+
     for (int i = 0; i < prefixes_count; i++)
     {
-        // printf("Non-option argument %s\n", ip_prefixes_array[i]);
+        if(!std::regex_match(ip_prefixes_array[i], ip_regex)){
+            throw std::invalid_argument("Prefix " + std::string(ip_prefixes_array[i]) + " is not in right form!");
+        }
         _ip_prefixes.insert(ip_prefixes_array[i]);
     }
 
-    // printf("filename = %s\n", _file_name ? _file_name : "");
-    // printf("interfacename = %s\n", _interface_name ? _interface_name : "");
-    // printf("Use help: %d\n\n", _print_help);
+    if(!_file_name && !_interface_name){
+        throw std::invalid_argument("Either interface name or file name must be provided!");
+    }
+
 }
 
 char* Options::GetFileName(){
@@ -60,4 +70,8 @@ char* Options::GetInterfaceName(){
 
 std::set<char *> Options::GetIPPrefixes(){
     return _ip_prefixes;
+}
+
+bool Options::PrintHelp(){
+    return _print_help;
 }

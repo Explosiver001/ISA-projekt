@@ -20,6 +20,7 @@ EventLogger::EventLogger(){
     curr_time = localtime(&now);
     strftime(time_str, 50, "dhcap_stats_log_%Y_%m_%d", curr_time);
     openlog (time_str, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
+
 }
 
 void EventLogger::Log50Exceeded(char * base, int mask_size){
@@ -27,6 +28,25 @@ void EventLogger::Log50Exceeded(char * base, int mask_size){
     printf("prefix %s/%u exceeded 50%% of allocations\n", base, mask_size);
 }
 
+void EventLogger::InitConsoleOutput(std::vector<char *> prefixes, std::vector<int> max_ips){
+    // printf("here\n");
+    // initscr(); //ncurses
+    // printw("IP-Prefix Max-hosts Allocated addresses Utilization\n");
+    // for(int i = 0; i < prefixes.size(); i++){
+    //     printw("%s %d 0.0%%\n", prefixes.at(i), max_ips.at(i));
+    // }
+    // refresh();
+    // printf("IP-Prefix Max-hosts Allocated addresses Utilization\n");
+    // for(int i = 0; i < prefixes.size(); i++){
+    //     printf("%s %d 0.0%%\n", prefixes.at(i), max_ips.at(i));
+    // }
+}
+
+
+void EventLogger::UpdateLine(int line, char* prefix, double percentage){
+
+}
+
 EventLogger::~EventLogger(){
-    closelog ();
+    closelog();
 }

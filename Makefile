@@ -2,8 +2,8 @@ GCC = g++
 CFLAGS = 
 EXE = dhcp-stats
 HEADERS = optparser.h pcaphandler.h stats.h logger.h
-LINK_FLAGS = -lpcap 
-#-lncurses
+LINK_FLAGS = -lpcap -lncurses
+
 
 default: main.o optparser.o pcaphandler.o stats.o logger.o
 	$(GCC) $(CFLAGS) $? -o $(EXE) $(LINK_FLAGS)
