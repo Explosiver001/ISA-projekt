@@ -55,7 +55,7 @@ void EventLogger::UpdateLine(int line, char* prefix, int max_devices, int device
     // for(int i = 0; i < shift; i++){
     //     printf("\x1b[1E"); // Move to beginning of next line
     // }
-    mvprintw(line+1, 0, "%s %d %.2f%\n", prefix, max_devices, (devices/(double)max_devices)*100);
+    mvprintw(line+1, 0, "%s %d %.2f%", prefix, max_devices, (devices/(double)max_devices)*100);
     move(_prefix_lines+1, 0);
     refresh();			/* Print it on to the real screen */
     // getch();			/* Wait for user input */
