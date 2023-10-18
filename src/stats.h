@@ -16,7 +16,9 @@ class Stats{
         typedef struct{
             char * prefix;
             uint32_t network_ip;
+            uint32_t broadcast_ip;
             uint32_t mask;
+            uint32_t max_devices;
             uint8_t mask_len;
             bool warn;
             set<uint32_t> ip_used; 
@@ -24,6 +26,7 @@ class Stats{
         vector<StatsItem_t> _items;
 
         void InitConsole();
+        bool BelongsToSubnet(StatsItem_t * subnet, uint32_t ip);
 
         
     public:

@@ -18,7 +18,7 @@ class PcapHandler{
         ~PcapHandler();
         PcapHandler(Options options, Stats stats);
         bool CreateSetFilter();
-        void GetData();
+        void CollectData();
 };
 
 #endif

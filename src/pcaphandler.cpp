@@ -38,13 +38,11 @@ bool PcapHandler::OpenOffline(){
     char errbuf[PCAP_ERRBUF_SIZE];
     _pcap = pcap_open_offline(_options.GetFileName(), errbuf);
     if(_pcap == NULL){
-        printf("%s\n",errbuf);
-        exit(1);
+        fprintf(stderr, "%s\n",errbuf);
+        return false;
     }
     return true; //! fix
 }
-
-
 
 bool PcapHandler::OpenLive(){
     char errbuf[PCAP_ERRBUF_SIZE];
@@ -53,14 +51,14 @@ bool PcapHandler::OpenLive(){
 
     if(pcap_lookupnet(_options.GetInterfaceName(),&netp,&maskp,errbuf) == PCAP_ERROR)
     {
-        printf("%s\n",errbuf);
-        exit(1);
+        fprintf(stderr, "%s\n",errbuf);
+        return false;
     }
 
     _pcap = pcap_open_live(_options.GetInterfaceName(), BUFSIZ, 1, 1000, errbuf);
     if(_pcap == NULL){
-        printf("%s\n",errbuf);
-        exit(1);
+        fprintf(stderr, "%s\n",errbuf);
+        return false;
     }
     return true; //! fix
 }
@@ -71,27 +69,23 @@ bool PcapHandler::CreateSetFilter(){
     bpf_u_int32 mask = 0;		    /* The netmask of our sniffing device */
     bpf_u_int32 net = 0;		    /* The IP of our sniffing device */
     if (pcap_compile(_pcap, &_fp, filter_expr.c_str(), 0, net) == -1) {
-        printf("\n\npcap_compile failed\n\n");
+        fprintf(stderr, "\n\npcap_compile failed\n\n");
         return false;
     }
     if (pcap_setfilter(_pcap, &_fp) == -1) {
-        printf("\n\npcap_setfilter faildef\n\n");
+        fprintf(stderr, "\n\npcap_setfilter failed\n\n");
         return false;
     }
     return true;
 }
 
-void PcapHandler::GetData(){
+void PcapHandler::CollectData(){
     struct pcap_pkthdr *header;
     const u_char *packet;
     u_int packetCount = 0;
 
     while (int returnValue = pcap_next_ex(_pcap, &header, &packet) >= 0)
     {
-        // Show the packet number
-        // fprintf(stderr, "\n\nPacket # %i\n", ++packetCount); //! delete
-
-
         struct ether_header *eptr = (struct ether_header *) packet;
 
         if(ntohs(eptr->ether_type) != ETHERTYPE_IP){
@@ -124,12 +118,8 @@ void PcapHandler::GetData(){
             }
         }
 
-        // fprintf(stderr, "message_type: %d\n", message_type);
         if(message_type != ACK)
             continue;
-
-        // fprintf(stderr, "YIAddr: %s\n", inet_ntoa(yip_addr)); //! delete
-
         // here collect stats
         _stats.AddIP(&yip_addr);
 

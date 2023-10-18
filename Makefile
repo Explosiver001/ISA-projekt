@@ -2,7 +2,7 @@ GCC = g++
 CFLAGS = 
 EXE = dhcp-stats
 SRC_DIR = src/
-LINK_FLAGS = -lpcap 
+LINK_FLAGS = -lpcap -lncurses
 
 
 default: main.o optparser.o pcaphandler.o stats.o logger.o
