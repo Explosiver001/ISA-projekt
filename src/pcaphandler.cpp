@@ -22,9 +22,10 @@ using namespace std;
 
 PcapHandler::~PcapHandler() = default;
 
-PcapHandler::PcapHandler(Options options, Stats stats){
+PcapHandler::PcapHandler(Options options, Stats stats, EventLogger logger){
     _options = options;
     _stats = stats;
+    _logger = logger;
     bool err = false;
     if(_options.GetFileName()){
         err = OpenOffline();
@@ -124,7 +125,8 @@ void PcapHandler::CollectData(){
         _stats.AddIP(&yip_addr);
 
     }
-    
+    if(_options.GetFileName())
+        _logger.NotifyFileEnd();
     pcap_freecode(&_fp);
     pcap_close(_pcap);
 }

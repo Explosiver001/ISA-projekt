@@ -15,6 +15,7 @@ class EventLogger{
         void Log50Exceeded(char * base, int mask_size);
         void InitConsoleOutput(std::vector<char *> prefixes, std::vector<int> max_ips);
         void UpdateLine(int prefix_num, char* prefix, int max_devices, int devices);
+        void NotifyFileEnd();
 
         ~EventLogger();
 };

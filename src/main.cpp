@@ -34,10 +34,9 @@ int main(int argc, char *argv[])
         exit(0);
     }
     Stats *stats = new Stats(options->GetIPPrefixes(), *logger);
-    PcapHandler pcaphandler(*options, *stats);
+    PcapHandler pcaphandler(*options, *stats, *logger);
     pcaphandler.CreateSetFilter();
     pcaphandler.CollectData();
-    getchar();
     FreeMem(logger, options, stats);
     return 0;
 }

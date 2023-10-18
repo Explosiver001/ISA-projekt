@@ -30,7 +30,7 @@ void EventLogger::Log50Exceeded(char * base, int mask_size){
 }
 
 void EventLogger::InitConsoleOutput(std::vector<char *> prefixes, std::vector<int> max_ips){
-    // _prefix_lines = max_ips.size();
+    _prefix_lines = max_ips.size();
     printw("IP-Prefix Max-hosts Allocated addresses Utilization");
     // printf("IP-Prefix Max-hosts Allocated addresses Utilization\n");
     // for(int i = 0; i < prefixes.size(); i++){
@@ -55,13 +55,15 @@ void EventLogger::UpdateLine(int line, char* prefix, int max_devices, int device
     // for(int i = 0; i < shift; i++){
     //     printf("\x1b[1E"); // Move to beginning of next line
     // }
-    mvprintw(line+1, 0, "%s %d %.2f%", prefix, max_devices, (devices/(double)max_devices)*100);
+    mvprintw(line+1, 0, "%s %d %.2f%%", prefix, max_devices, (devices/(double)max_devices)*100);
     move(_prefix_lines+1, 0);
     refresh();			/* Print it on to the real screen */
     // getch();			/* Wait for user input */
+}
 
-
-
+void EventLogger::NotifyFileEnd(){
+    printw("All records from file have been processed. Press any key to exit...");
+    getch();			/* Wait for user input */
 }
 
 EventLogger::~EventLogger(){

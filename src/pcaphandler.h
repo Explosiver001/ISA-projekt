@@ -4,11 +4,13 @@
 #include <pcap.h>
 #include "optparser.h"
 #include "stats.h"
+#include "logger.h"
 
 class PcapHandler{
     private:
         Options _options;
         Stats _stats;
+        EventLogger _logger;
         pcap_t * _pcap;
         struct bpf_program _fp;
         bool OpenOffline();
@@ -16,7 +18,7 @@ class PcapHandler{
     
     public:
         ~PcapHandler();
-        PcapHandler(Options options, Stats stats);
+        PcapHandler(Options options, Stats stats, EventLogger logger);
         bool CreateSetFilter();
         void CollectData();
 };
