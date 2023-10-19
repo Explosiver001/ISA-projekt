@@ -67,7 +67,6 @@ bool PcapHandler::OpenLive(){
 bool PcapHandler::CreateSetFilter(){
     string filter_expr = "( ip and udp and ( src port 67 ) )";
 
-    bpf_u_int32 mask = 0;		    /* The netmask of our sniffing device */
     bpf_u_int32 net = 0;		    /* The IP of our sniffing device */
     if (pcap_compile(_pcap, &_fp, filter_expr.c_str(), 0, net) == -1) {
         fprintf(stderr, "\n\npcap_compile failed\n\n");

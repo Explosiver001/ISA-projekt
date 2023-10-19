@@ -43,8 +43,9 @@ Options::Options(int argc, char **argv)
 
     char **ip_prefixes_array = &argv[optind];
     int prefixes_count = argc - optind;
-
-    std::regex ip_regex("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}/[0-9]{1,2}$");
+    // https://stackoverflow.com/a/25969006
+    // https://stackoverflow.com/a/31791657
+    std::regex ip_regex("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/(?:[0-9]|[12][0-9]|3[01])$");
 
     for (int i = 0; i < prefixes_count; i++)
     {
