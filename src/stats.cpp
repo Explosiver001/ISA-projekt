@@ -1,3 +1,13 @@
+/**
+ * @file stats.cpp
+ * @author Michal Novák (xnovak3g@stud.fit.vutbr.cz)
+ * @brief Implementation of statistics manager
+ * @date 25.10.2023
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include "stats.h"
 
 #include <sys/socket.h>
@@ -28,12 +38,9 @@ Stats::Stats(std::set<char *> ip_prefixes, EventLogger logger){
         item.network_ip = ntohl(addr.sin_addr.s_addr) & item.mask;
         item.broadcast_ip = item.network_ip | ~item.mask; 
         item.max_devices = (~item.mask - 1);
-        // printf("network: %x %x %d\n", item.network_ip, item.broadcast_ip, item.broadcast_ip - item.network_ip);
-        // printf("prefix: %s\n\n", item.prefix);
         _items.push_back(item);
     }
     sort(_items.begin(), _items.end(), [](StatsItem_t const &a, StatsItem_t const &b) {return a.mask_len < b.mask_len;});
-    InitConsole();
 }
 
 void Stats::AddIP(struct in_addr * ip){
@@ -43,8 +50,6 @@ void Stats::AddIP(struct in_addr * ip){
         if(!BelongsToSubnet(item, normalized_ip))
             continue;
         uint32_t network_ip = htonl(item->network_ip);
-        // printf("ip: %s", inet_ntoa(*ip));
-        // printf(" under base: %s/%d\n", inet_ntoa(*(struct in_addr*)&network_ip), item->mask_len);
 
         item->ip_used.insert(normalized_ip);
         _logger.UpdateLine(i, item->prefix, item->max_devices, item->ip_used.size());
@@ -53,7 +58,7 @@ void Stats::AddIP(struct in_addr * ip){
         }
 
         item->warn = true;
-        _logger.Log50Exceeded(inet_ntoa(*(struct in_addr*)&network_ip), item->mask_len);
+        _logger.Log50Exceeded(item->prefix);
     }
 }   
 

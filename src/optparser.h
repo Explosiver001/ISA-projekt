@@ -1,3 +1,13 @@
+/**
+ * @file optparser.h
+ * @author Michal Novák (xnovak3g@stud.fit.vutbr.cz)
+ * @brief Declaration of argument parser
+ * @date 25.10.2023
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #ifndef _OPT_PARSER_H_
 #define _OPT_PARSER_H_
 

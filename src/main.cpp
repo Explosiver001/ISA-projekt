@@ -1,9 +1,26 @@
+/**
+ * @file main.cpp
+ * @author Michal Novák (xnovak3g@stud.fit.vutbr.cz)
+ * @brief Program entry point
+ * @date 25.10.2023
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include "optparser.h"
 #include "pcaphandler.h"
 #include "logger.h"
 #include "stats.h"
 #include <stdexcept>
 
+/**
+ * @brief Delete all dynamic object memory
+ * 
+ * @param logger Eventlogger
+ * @param options Options
+ * @param stats Stats
+ */
 void FreeMem(EventLogger *logger, Options *options, Stats *stats){
     if(logger)
         delete logger;
@@ -33,14 +50,31 @@ int main(int argc, char *argv[])
         printf("HELP\n");
         exit(0);
     }
+
     Stats *stats = new Stats(options->GetIPPrefixes(), *logger);
-    PcapHandler pcaphandler(*options, *stats, *logger);
+
+    PcapHandler pcaphandler(options, stats, logger);
+
+    bool err = false;
+    if(options->GetFileName()){
+        err = !pcaphandler.OpenOffline();
+    }
+    else if (options->GetInterfaceName()){
+        err = !pcaphandler.OpenLive();
+    }
+    if(err){
+        fprintf(stderr, "Use -h to see all options.\n");
+        exit(1);
+    }
+
     if(!pcaphandler.CreateSetFilter()){
         FreeMem(logger, options, stats);
         fprintf(stderr, "Could not create or set pcap filter!\n");
         exit(1);
     }
+
     pcaphandler.CollectData();
+
     FreeMem(logger, options, stats);
     return 0;
 }

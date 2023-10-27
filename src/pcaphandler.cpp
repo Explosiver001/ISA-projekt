@@ -1,3 +1,13 @@
+/**
+ * @file pcaphandler.cpp
+ * @author Michal Novák (xnovak3g@stud.fit.vutbr.cz)
+ * @brief Implementation of tool used for reading and extracting data from packets
+ * @date 25.10.2023
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include <stdio.h>
 #include <string>
 #include <netinet/in.h>
@@ -22,17 +32,12 @@ using namespace std;
 
 PcapHandler::~PcapHandler() = default;
 
-PcapHandler::PcapHandler(Options options, Stats stats, EventLogger logger){
-    _options = options;
-    _stats = stats;
-    _logger = logger;
-    bool err = false;
-    if(_options.GetFileName()){
-        err = OpenOffline();
-    }
-    else if (_options.GetInterfaceName()){
-        err = OpenLive();
-    }
+PcapHandler::PcapHandler(Options *options, Stats *stats, EventLogger *logger){
+    _options = *options;
+    _stats = *stats;
+    _logger = *logger;
+
+    _stats.InitConsole();
 }
 
 bool PcapHandler::OpenOffline(){
