@@ -19,7 +19,7 @@
  */
 class EventLogger{
     private:
-        int _prefix_lines;
+        int _prefix_lines; //store count of prefixes
 
     public:
         /**

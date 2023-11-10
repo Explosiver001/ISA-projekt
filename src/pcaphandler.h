@@ -18,11 +18,11 @@
 
 class PcapHandler{
     private:
-        Options _options;
-        Stats _stats;
-        EventLogger _logger;
-        pcap_t * _pcap;
-        struct bpf_program _fp;
+        Options _options; // stored Options ref
+        Stats _stats; // stored Stats ref
+        EventLogger _logger; // stored Logger ref
+        pcap_t * _pcap; // opened pcap with pcap_open_offline or pcap_open_live
+        struct bpf_program _fp; // used for pcap_compile
     
     public:
         ~PcapHandler();

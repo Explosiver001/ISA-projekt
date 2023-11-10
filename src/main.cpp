@@ -33,27 +33,28 @@ void FreeMem(EventLogger *logger, Options *options, Stats *stats){
 
 int main(int argc, char *argv[])
 {
-    EventLogger *logger = new EventLogger();
+    EventLogger *logger = new EventLogger(); // init EventLogger
     Options *options;
     try{
-        options = new Options(argc,argv);
+        options = new Options(argc,argv); // init Options
     }
-    catch(std::invalid_argument& e){
+    catch(std::invalid_argument& e){ // Options could not create
         FreeMem(logger, NULL, NULL);
         fprintf(stderr, "%s\n", e.what());
         fprintf(stderr, "Use -h to see all options.\n");
         exit(1);
     }
 
+    // program was launched with -h
     if(options->PrintHelp()){
         FreeMem(logger, options, NULL);
         printf("HELP\n");
         exit(0);
     }
 
-    Stats *stats = new Stats(options->GetIPPrefixes(), *logger);
+    Stats *stats = new Stats(options->GetIPPrefixes(), *logger); // init stats
 
-    PcapHandler pcaphandler(options, stats, logger);
+    PcapHandler pcaphandler(options, stats, logger); // init pcap handler
 
     bool err = false;
     if(options->GetFileName()){

@@ -22,10 +22,10 @@
 #define ETHERNET_HEADER 14 // size of ethernet header
 #define UDP_HEADER 8 // size of UDP header
 #define YIADDR_OFFSET 16 // offset of YIAddr in DHCP packet
-#define DHCP_OPTIONS_OFFSET 240 // 
-#define OPTIONS_END 0xff
-#define OPTIONS_MESSAGE_T 0x35
-#define ACK 0x05
+#define DHCP_OPTIONS_OFFSET 240 // DHCP start of options part
+#define OPTIONS_END 0xff // DHCP options end
+#define OPTIONS_MESSAGE_T 0x35 // DHCP message type option 
+#define ACK 0x05 // DHCP ACK message
 
 
 using namespace std;

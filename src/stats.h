@@ -27,16 +27,16 @@ class Stats{
          * 
          */
         typedef struct{
-            char * prefix;
-            uint32_t network_ip;
-            uint32_t broadcast_ip;
-            uint32_t mask;
-            uint32_t max_devices;
-            uint8_t mask_len;
-            bool warn;
-            set<uint32_t> ip_used; 
+            char * prefix; // string prefix
+            uint32_t network_ip; // network ip of subnet
+            uint32_t broadcast_ip; // broadcast ip of subnet
+            uint32_t mask; // network mask of subnet
+            uint32_t max_devices; // max count of usable devices in subnet
+            uint8_t mask_len; // lenght of subnet mask
+            bool warn; // true if 50 % util exceeded
+            set<uint32_t> ip_used; // all IPs already captured
         } StatsItem_t;
-        vector<StatsItem_t> _items;
+        vector<StatsItem_t> _items; // all subnets
 
         /**
          * @brief Decides if IP is part of subnet
