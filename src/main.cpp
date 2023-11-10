@@ -35,6 +35,7 @@ void FreeMem(EventLogger *logger, Options *options, Stats *stats){
 int main(int argc, char *argv[])
 {
     EventLogger *logger = new EventLogger(); // init EventLogger
+    signal(SIGINT, [](int signum) {});
     Options *options = NULL;
     Stats *stats = NULL;
     try{

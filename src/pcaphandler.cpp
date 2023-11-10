@@ -16,6 +16,7 @@
 #include <netinet/ether.h> 
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <csignal>
 
 #include "pcaphandler.h"
 
@@ -30,13 +31,20 @@
 
 using namespace std;
 
+sig_atomic_t signaled = 0;
+
 PcapHandler::~PcapHandler() = default;
+
+void signalHandler(int signum) {
+    signaled = 1;
+}
 
 PcapHandler::PcapHandler(Options *options, Stats *stats, EventLogger *logger){
     _options = *options;
     _stats = *stats;
     _logger = *logger;
     _stats.InitConsole();
+    signal(SIGINT, signalHandler);  
 }
 
 bool PcapHandler::OpenOffline(){
@@ -94,7 +102,7 @@ void PcapHandler::CollectData(){
     struct pcap_pkthdr *header; // packet header
     const u_char *packet; // data in packet
 
-    while (int returnValue = pcap_next_ex(_pcap, &header, &packet) >= 0)
+    while (int returnValue = pcap_next_ex(_pcap, &header, &packet) >= 0 && !signaled)
     {
         struct ether_header *eptr = (struct ether_header *) packet; //cast to ethertnet header
 

@@ -23,7 +23,7 @@ class PcapHandler{
         EventLogger _logger; // stored Logger ref
         pcap_t * _pcap; // opened pcap with pcap_open_offline or pcap_open_live
         struct bpf_program _fp; // used for pcap_compile
-        
+        void SignalHandler(int signum);
     
     public:
         ~PcapHandler();
