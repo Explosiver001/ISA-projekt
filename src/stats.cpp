@@ -15,6 +15,7 @@
 #include <arpa/inet.h>
 #include <string>
 #include <algorithm>
+#include <stdexcept>
 
 using namespace std;
 
@@ -30,7 +31,9 @@ Stats::Stats(std::set<char *> ip_prefixes, EventLogger logger){
         StatsItem_t item;
         struct sockaddr_in addr;
 
-        inet_aton(prefix.substr(0,prefix.find('/')).c_str(), &addr.sin_addr);
+        if(!inet_aton(prefix.substr(0,prefix.find('/')).c_str(), &addr.sin_addr)){
+            throw invalid_argument("Could not parse given prefixes! Check and try again.");
+        }
         item.prefix = *it;
         item.warn = false;
         item.mask_len = atoi(prefix.substr(prefix.find('/')+1).c_str());

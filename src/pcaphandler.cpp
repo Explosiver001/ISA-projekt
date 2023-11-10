@@ -36,7 +36,6 @@ PcapHandler::PcapHandler(Options *options, Stats *stats, EventLogger *logger){
     _options = *options;
     _stats = *stats;
     _logger = *logger;
-
     _stats.InitConsole();
 }
 
@@ -47,7 +46,7 @@ bool PcapHandler::OpenOffline(){
         fprintf(stderr, "%s\n",errbuf);
         return false;
     }
-    return true; //! fix
+    return true;
 }
 
 bool PcapHandler::OpenLive(){
@@ -66,7 +65,7 @@ bool PcapHandler::OpenLive(){
         fprintf(stderr, "%s\n",errbuf);
         return false;
     }
-    return true; //! fix
+    return true;
 }
 
 bool PcapHandler::CreateSetFilter(){
@@ -84,17 +83,22 @@ bool PcapHandler::CreateSetFilter(){
     return true;
 }
 
+void PcapHandler::FreePcap(){
+    if(&_fp)
+        pcap_freecode(&_fp);
+    if(_pcap)
+        pcap_close(_pcap);
+}
+
 void PcapHandler::CollectData(){
-    struct pcap_pkthdr *header;
-    const u_char *packet;
-    u_int packetCount = 0;
+    struct pcap_pkthdr *header; // packet header
+    const u_char *packet; // data in packet
 
     while (int returnValue = pcap_next_ex(_pcap, &header, &packet) >= 0)
     {
-        struct ether_header *eptr = (struct ether_header *) packet;
+        struct ether_header *eptr = (struct ether_header *) packet; //cast to ethertnet header
 
-        if(ntohs(eptr->ether_type) != ETHERTYPE_IP){
-            // fprintf(stderr, "Ethernet type is not IP\n"); //! redo
+        if(ntohs(eptr->ether_type) != ETHERTYPE_IP){ // packet does not conatin IPv4
             continue;
         }
 
@@ -102,19 +106,22 @@ void PcapHandler::CollectData(){
         struct ip* ip_header = (struct ip*) (packet + ETHERNET_HEADER);
         ip_header_len = ip_header->ip_hl*4;
 
-        if(ip_header->ip_p != IPPROTO_UDP){
-            // fprintf(stderr, "IP protocol is not UDP\n"); //! redo
+        if(ip_header->ip_p != IPPROTO_UDP){ // packet does not contain UDP datagram
             continue;
         }
 
+        // get assigned client IP
         struct in_addr  yip_addr = *(struct in_addr  *)(packet + ETHERNET_HEADER + ip_header_len + UDP_HEADER + YIADDR_OFFSET);
 
+        // count options offset from start of packet
         uint32_t options_offset = ETHERNET_HEADER + ip_header_len + UDP_HEADER + DHCP_OPTIONS_OFFSET;
-        uint8_t option;
-        uint8_t message_type;
+        uint8_t option; // prepare for option
+        uint8_t option_data; 
+
+        // get option end quit if MessageType or find another option 
         while((option = *(uint8_t *)(packet + options_offset)) != OPTIONS_END && options_offset < header->caplen){
             if(option == OPTIONS_MESSAGE_T){
-                message_type = *(uint8_t *)(packet + options_offset + 2);
+                option_data = *(uint8_t *)(packet + options_offset + 2);
                 break;
             }
             else{
@@ -123,16 +130,21 @@ void PcapHandler::CollectData(){
             }
         }
 
-        if(message_type != ACK)
+        // check if type is ACK
+        if(option_data != ACK)
             continue;
-        // here collect stats
+
+        // add client ip to stats
         _stats.AddIP(&yip_addr);
 
     }
+    // free resources
+    FreePcap();
+
+    // if using file, pause output until any key is pressed
     if(_options.GetFileName())
         _logger.NotifyFileEnd();
-    pcap_freecode(&_fp);
-    pcap_close(_pcap);
+
 }
 
 

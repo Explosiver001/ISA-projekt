@@ -23,6 +23,7 @@ class PcapHandler{
         EventLogger _logger; // stored Logger ref
         pcap_t * _pcap; // opened pcap with pcap_open_offline or pcap_open_live
         struct bpf_program _fp; // used for pcap_compile
+        
     
     public:
         ~PcapHandler();
@@ -54,6 +55,12 @@ class PcapHandler{
          * 
          */
         void CollectData();
+        
+        /**
+         * @brief Free pcap resources
+         * 
+         */
+        void FreePcap();
 };
 
 #endif
