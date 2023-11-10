@@ -53,12 +53,10 @@ void Stats::AddIP(struct in_addr * ip){
 
         item->ip_used.insert(normalized_ip);
         _logger.UpdateLine(i, item->prefix, item->max_devices, item->ip_used.size());
-        if(!(item->ip_used.size() >= (~item->mask - 1) / 2.0) || item->warn){
-            continue;
+        if((item->ip_used.size() >= item->max_devices / 2.0) && !item->warn){
+            item->warn = true;
+            _logger.Log50Exceeded(item->prefix);
         }
-
-        item->warn = true;
-        _logger.Log50Exceeded(item->prefix);
     }
 }   
 

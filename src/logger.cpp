@@ -27,7 +27,6 @@ EventLogger::EventLogger(){
 
 void EventLogger::Log50Exceeded(char * prefix){
     syslog (LOG_NOTICE, "prefix %s exceeded 50%% of allocations\n", prefix);
-    refresh();
 }
 
 

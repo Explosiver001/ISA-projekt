@@ -7,7 +7,8 @@ LINK_FLAGS = -lpcap -lncurses
 
 default: main.o optparser.o pcaphandler.o stats.o logger.o
 	$(GCC) $(CFLAGS) $? -o $(EXE) $(LINK_FLAGS)
-	rm -rf *.o
+	rm *.o
+
 
 clean:
 	rm -rf *.o $(EXE)
