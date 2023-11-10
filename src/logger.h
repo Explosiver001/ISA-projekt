@@ -11,6 +11,7 @@
 #ifndef _EVENT_LOGGER_H_
 #define _EVENT_LOGGER_H_
 #include <vector>
+#include <cstdint>
 
 /**
  * @brief Log information to console and syslog
@@ -41,7 +42,7 @@ class EventLogger{
          * @param prefixes 
          * @param max_ips 
          */
-        void InitConsoleOutput(std::vector<char *> prefixes, std::vector<int> max_ips);
+        void InitConsoleOutput(std::vector<char *> prefixes, std::vector<uint32_t> max_ips);
 
         /**
          * @brief Updates output on specified line
@@ -51,7 +52,7 @@ class EventLogger{
          * @param max_devices 
          * @param devices 
          */
-        void UpdateLine(int prefix_num, char* prefix, int max_devices, int devices);
+        void UpdateLine(int prefix_num, char* prefix, uint32_t max_devices, uint32_t devices);
 
         /**
          * @brief Used when reading from files to freeze output

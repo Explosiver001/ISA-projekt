@@ -68,7 +68,7 @@ bool Stats::BelongsToSubnet(StatsItem_t * subnet, uint32_t ip){
 
 void Stats::InitConsole(){
     std::vector<char *> prefixes;
-    std::vector<int> max_ips;
+    std::vector<uint32_t> max_ips;
     for(int i = 0; i < _items.size(); i++){
         StatsItem_t * item = &_items.at(i);
         prefixes.push_back(item->prefix);

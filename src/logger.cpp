@@ -31,18 +31,18 @@ void EventLogger::Log50Exceeded(char * prefix){
 }
 
 
-void EventLogger::InitConsoleOutput(std::vector<char *> prefixes, std::vector<int> max_ips){
+void EventLogger::InitConsoleOutput(std::vector<char *> prefixes, std::vector<uint32_t> max_ips){
     _prefix_lines = max_ips.size();
     printw("IP-Prefix Max-hosts Allocated addresses Utilization");
     for(int i = 0; i < prefixes.size(); i++){
-        mvprintw(i+1, 0, "%s %d 0 0.0%%", prefixes.at(i), max_ips.at(i));
+        mvprintw(i+1, 0, "%s %u 0 0.0%%", prefixes.at(i), max_ips.at(i));
     }
     move(_prefix_lines+1, 0);
     refresh();
 }
 
-void EventLogger::UpdateLine(int line, char* prefix, int max_devices, int devices){
-    mvprintw(line+1, 0, "%s %d %d %.2f%%", prefix, max_devices, devices, (devices/(double)max_devices)*100);
+void EventLogger::UpdateLine(int line, char* prefix, uint32_t max_devices, uint32_t devices){
+    mvprintw(line+1, 0, "%s %u %u %.2f%%", prefix, max_devices, devices, ((double)devices/max_devices)*100);
     move(_prefix_lines+1, 0);
     refresh();			
 }
