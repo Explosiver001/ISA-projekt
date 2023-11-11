@@ -65,11 +65,11 @@ Options::Options(int argc, char **argv)
         _ip_prefixes.insert(ip_prefixes_array[i]);
     }
 
-    if(_ip_prefixes.size() == 0){
+    if(_ip_prefixes.size() == 0 && !_print_help){
         throw std::invalid_argument("At least 1 network prefix must be given!");
     }
 
-    if(!_file_name && !_interface_name){
+    if(!_file_name && !_interface_name && !_print_help){
         throw std::invalid_argument("Either interface name or file name must be provided!");
     }
 
