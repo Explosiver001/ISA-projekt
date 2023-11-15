@@ -27,6 +27,11 @@ EventLogger::EventLogger(){
 
 void EventLogger::Log50Exceeded(char * prefix){
     syslog (LOG_NOTICE, "prefix %s exceeded 50%% of allocations\n", prefix);
+    // printf ("prefix %s exceeded 50%% of allocations\n", prefix);
+    ++_prefix_lines;
+    mvprintw(_prefix_lines, 0, "prefix %s exceeded 50%% of allocations\n", prefix);
+    move(_prefix_lines+1, 0);
+    refresh();
 }
 
 
@@ -41,7 +46,7 @@ void EventLogger::InitConsoleOutput(std::vector<char *> prefixes, std::vector<ui
 }
 
 void EventLogger::UpdateLine(int line, char* prefix, uint32_t max_devices, uint32_t devices){
-    mvprintw(line+1, 0, "%s %u %u %.2f%%", prefix, max_devices, devices, ((double)devices/max_devices)*100);
+    mvprintw(line+1, 0, "%s %u %u %.2lf%%", prefix, max_devices, devices, ((double)devices/max_devices)*100);
     move(_prefix_lines+1, 0);
     refresh();			
 }

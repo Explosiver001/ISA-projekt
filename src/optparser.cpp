@@ -6,6 +6,7 @@
  * 
  * @copyright Copyright (c) 2023
  * 
+ * @note This file contains code from external sources
  */
 
 #include <ctype.h>
@@ -53,9 +54,13 @@ Options::Options(int argc, char **argv)
 
     char **ip_prefixes_array = &argv[optind];
     int prefixes_count = argc - optind;
-    // https://stackoverflow.com/a/25969006
-    // https://stackoverflow.com/a/31791657
-    std::regex ip_regex("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/(?:[0-9]|[12][0-9]|30)$");
+
+    /**
+     * Regex used in this code is inspired by combination of the following:
+     *  https://stackoverflow.com/a/25969006
+     *  https://stackoverflow.com/a/31791657
+     */
+    std::regex ip_regex("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/(?:[0-9]|[12][0-9]|30)$");
 
     for (int i = 0; i < prefixes_count; i++)
     {
@@ -71,6 +76,10 @@ Options::Options(int argc, char **argv)
 
     if(!_file_name && !_interface_name && !_print_help){
         throw std::invalid_argument("Either interface name or file name must be provided!");
+    }
+
+    if(_file_name && _interface_name){
+        throw std::invalid_argument("Only 1 source of packets can be given!");
     }
 
 }

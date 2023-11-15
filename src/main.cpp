@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
     PcapHandler pcaphandler(options, stats, logger); // init pcap handler
 
     bool err = false;
+
     if(options->GetFileName()){
         err = !pcaphandler.OpenOffline();
     }

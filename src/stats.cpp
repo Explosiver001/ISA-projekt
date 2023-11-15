@@ -42,7 +42,7 @@ Stats::Stats(std::set<char *> ip_prefixes, EventLogger logger){
         item.broadcast_ip = item.network_ip | ~item.mask; 
         item.max_devices = (~item.mask - 1);
         _items.push_back(item);
-    }
+    }   
     sort(_items.begin(), _items.end(), [](StatsItem_t const &a, StatsItem_t const &b) {return a.mask_len < b.mask_len;});
 }
 
