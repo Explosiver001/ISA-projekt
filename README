@@ -1,1 +1,33 @@
+Autor:      Michal Novák, xnovak3g at stud.fit.vutbr.cz
+Vytvořeno:  15.11.2023
 
+Popis programu:
+    Tento program slouží k vytváření statistik ze zachycené DHCP komunikace. 
+
+Rozšíření:
+
+Omezení:
+    - při spuštění programu nelze kombinovat přepínače "-r" a "-i"
+
+Příklad spuštění: 
+    ./dhcp-stats [-r] [-r <filename>] [-i <interface-name>] <ip-prefix> [ <ip-prefix> [ ... ] ]
+        -h              - vypíše pomocné informace a ukončí program
+        -r <filename>   - název PCAP souboru
+        -i <interface>  - název internetového rozhraní
+        <ip-prefix>     - je prefix podsítě
+
+Seznam odevzdaný souborů:
+    dhcp-stats.1
+    Makefile
+    manual.pdf
+    README
+    src
+    ├── logger.cpp
+    ├── logger.h
+    ├── main.cpp
+    ├── optparser.cpp
+    ├── optparser.h
+    ├── pcaphandler.cpp
+    ├── pcaphandler.h
+    ├── stats.cpp
+    └── stats.h

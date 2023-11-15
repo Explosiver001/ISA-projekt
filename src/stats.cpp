@@ -54,11 +54,13 @@ void Stats::AddIP(struct in_addr * ip){
             continue;
         uint32_t network_ip = htonl(item->network_ip);
 
-        item->ip_used.insert(normalized_ip);
-        _logger.UpdateLine(i, item->prefix, item->max_devices, item->ip_used.size());
-        if((item->ip_used.size() >= item->max_devices / 2.0) && !item->warn){
-            item->warn = true;
-            _logger.Log50Exceeded(item->prefix);
+        auto res = item->ip_used.insert(normalized_ip);
+        if(res.second){
+            _logger.UpdateLine(i, item->prefix, item->max_devices, item->ip_used.size());
+            if((item->ip_used.size() >= item->max_devices / 2.0) && !item->warn){
+                item->warn = true;
+                _logger.Log50Exceeded(item->prefix);
+            }
         }
     }
 }   

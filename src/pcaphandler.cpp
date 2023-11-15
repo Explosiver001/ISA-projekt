@@ -28,6 +28,8 @@
 #define OPTIONS_MESSAGE_T 0x35 // DHCP message type option 
 #define ACK 0x05 // DHCP ACK message
 
+#define MAX_PACKET_SIZE 2000
+
 
 using namespace std;
 
@@ -68,7 +70,7 @@ bool PcapHandler::OpenLive(){
         return false;
     }
 
-    _pcap = pcap_open_live(_options.GetInterfaceName(), BUFSIZ, 1, 1000, errbuf);
+    _pcap = pcap_open_live(_options.GetInterfaceName(), MAX_PACKET_SIZE, 1, 1000, errbuf);
     if(_pcap == NULL){
         fprintf(stderr, "%s\n",errbuf);
         return false;

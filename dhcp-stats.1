@@ -3,6 +3,7 @@
 dhcp-stats \- get statistics of subnet load
 .SH SYNOPSIS
 .B dhcp-stats
+[\fB\-h\fR]
 [\fB\-r\fR \fI<filename>\fR]
 [\fB\-i\fR \fI<interface>\fR]
 .IR <ip-prefix>
@@ -11,6 +12,9 @@ dhcp-stats \- get statistics of subnet load
 .B dhcp-stats
 collects data from PCAP file or captures traffic on interface and creates statistics containing information about subnet load.
 .SH OPTIONS
+.TP
+.BR \-h\fR
+Print help and quit.
 .TP
 .BR \-r " "\fI<filename>\fR
 PCAP file to get statistics from.

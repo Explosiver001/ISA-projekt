@@ -28,6 +28,5 @@ stats.o: $(SRC_DIR)stats.cpp $(SRC_DIR)*.h
 logger.o: $(SRC_DIR)logger.cpp $(SRC_DIR)*.h
 	$(GCC) $(CFLAGS) -c $< -o $@
 
-# add documentation
 pack:
-	tar cvf xnovak3g.tar src/* dhcp-stats.1 LICENSE Makefile README 
+	tar cvf xnovak3g.tar src/* dhcp-stats.1 Makefile README manual.pdf

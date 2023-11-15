@@ -52,7 +52,8 @@ int main(int argc, char *argv[])
     // program was launched with -h
     if(options->PrintHelp()){
         FreeMem(logger, options, NULL);
-        printf("./dhcp-stats [-r <filename>] [-i <interface-name>] <ip-prefix> [ <ip-prefix> [ ... ] ]\n");
+        printf("./dhcp-stats [-h] [-r <filename>] [-i <interface-name>] <ip-prefix> [ <ip-prefix> [ ... ] ]\n");
+        printf("\t-h \t\t- print this message and quit\n");
         printf("\t-r <filename>\t- statistics will be collected from pcap file\n");
         printf("\t-i <interface>\t- interface that will capture traffic\n");
         printf("\t<ip-prefix>\t- network prefixes that will be included into statisctics\n");
