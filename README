@@ -10,7 +10,7 @@ Omezení:
     - při spuštění programu nelze kombinovat přepínače "-r" a "-i"
 
 Příklad spuštění: 
-    ./dhcp-stats [-r] [-r <filename>] [-i <interface-name>] <ip-prefix> [ <ip-prefix> [ ... ] ]
+    ./dhcp-stats {-h | -r <filename> | -i <interface-name>} <ip-prefix> [ <ip-prefix> [ ... ] ]
         -h              - vypíše pomocné informace a ukončí program
         -r <filename>   - název PCAP souboru
         -i <interface>  - název internetového rozhraní
