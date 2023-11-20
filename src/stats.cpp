@@ -37,7 +37,7 @@ Stats::Stats(std::set<char *> ip_prefixes, EventLogger logger){
         item.prefix = *it;
         item.warn = false;
         item.mask_len = atoi(prefix.substr(prefix.find('/')+1).c_str());
-        item.mask = item.mask_len ? ~0 << 32 - item.mask_len : 0;
+        item.mask = item.mask_len ? ~0 << (32 - item.mask_len) : 0;
         item.network_ip = ntohl(addr.sin_addr.s_addr) & item.mask;
         item.broadcast_ip = item.network_ip | ~item.mask; 
         item.max_devices = (~item.mask - 1);
@@ -48,11 +48,10 @@ Stats::Stats(std::set<char *> ip_prefixes, EventLogger logger){
 
 void Stats::AddIP(struct in_addr * ip){
     uint32_t normalized_ip = ntohl(ip->s_addr);
-    for(int i = 0; i < _items.size(); i++){
+    for(unsigned long i = 0; i < _items.size(); i++){
         StatsItem_t * item = &_items.at(i);
         if(!BelongsToSubnet(item, normalized_ip))
             continue;
-        uint32_t network_ip = htonl(item->network_ip);
 
         auto res = item->ip_used.insert(normalized_ip);
         if(res.second){
@@ -72,7 +71,7 @@ bool Stats::BelongsToSubnet(StatsItem_t * subnet, uint32_t ip){
 void Stats::InitConsole(){
     std::vector<char *> prefixes;
     std::vector<uint32_t> max_ips;
-    for(int i = 0; i < _items.size(); i++){
+    for(unsigned long i = 0; i < _items.size(); i++){
         StatsItem_t * item = &_items.at(i);
         prefixes.push_back(item->prefix);
         max_ips.push_back(item->max_devices);

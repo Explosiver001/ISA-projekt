@@ -8,6 +8,7 @@ Rozšíření:
 
 Omezení:
     - při spuštění programu nelze kombinovat přepínače "-r" a "-i"
+    - délka masky prefixu se musí pohybovat v rozsahu /0 až /30, ostatní hodnoty jsou vyhodnoceny jako neplatné
 
 Příklad spuštění: 
     ./dhcp-stats {-h | -r <filename> | -i <interface-name>} <ip-prefix> [ <ip-prefix> [ ... ] ]

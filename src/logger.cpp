@@ -38,7 +38,7 @@ void EventLogger::Log50Exceeded(char * prefix){
 void EventLogger::InitConsoleOutput(std::vector<char *> prefixes, std::vector<uint32_t> max_ips){
     _prefix_lines = max_ips.size();
     printw("IP-Prefix Max-hosts Allocated addresses Utilization");
-    for(int i = 0; i < prefixes.size(); i++){
+    for(unsigned long i = 0; i < prefixes.size(); i++){
         mvprintw(i+1, 0, "%s %u 0 0.0%%", prefixes.at(i), max_ips.at(i));
     }
     move(_prefix_lines+1, 0);

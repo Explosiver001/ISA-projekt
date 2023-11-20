@@ -1,5 +1,5 @@
 GCC = g++
-CFLAGS = 
+CFLAGS = -std=c++2a -Wall
 EXE = dhcp-stats
 SRC_DIR = src/
 LINK_FLAGS = -lpcap -lncurses
